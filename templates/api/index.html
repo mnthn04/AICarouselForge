@@ -1,0 +1,260 @@
+{% extends 'api/base.html' %}
+{% load static %}
+
+{% block title %}AI Carousel Generator Pro{% endblock %}
+
+{% block content %}
+<div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-section">
+                <i class="fas fa-layer-group"></i>
+                <span>CarouselAI</span>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="generator">
+                <i class="fas fa-plus-circle"></i>
+                <span>New Carousel</span>
+            </a>
+            <a href="#" class="nav-item" data-section="templates">
+                <i class="fas fa-th"></i>
+                <span>Templates</span>
+            </a>
+            <a href="#" class="nav-item" data-section="recent">
+                <i class="fas fa-history"></i>
+                <span>Recent</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="upgrade-box">
+                <div class="upgrade-icon">⭐</div>
+                <h4>Pro Features</h4>
+                <p>Unlock advanced designs</p>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Generator Panel -->
+        <div class="content-panel" id="generatorPanel">
+            <div class="panel-header">
+                <h1>AI Carousel Generator Pro</h1>
+                <p>With Logo, Profile & Custom Branding</p>
+            </div>
+            
+            <div class="panel-content">
+                <form id="carouselForm" class="carousel-form">
+                    {% csrf_token %}
+                    
+                    <div class="branding-section">
+                        <h3 style="color: var(--dark); margin-bottom: 1rem; font-size: 1rem;">Branding</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Profile Image</label>
+                                <div class="file-upload">
+                                    <input type="file" id="profileImage" accept="image/*" class="file-input">
+                                    <div class="file-upload-display">
+                                        <i class="fas fa-image"></i>
+                                        <span>Choose profile image</span>
+                                    </div>
+                                    <img id="profileImagePreview" style="display: none; width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-top: 0.75rem;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Brand Logo</label>
+                                <div class="file-upload">
+                                    <input type="file" id="brandLogo" accept="image/*" class="file-input">
+                                    <div class="file-upload-display">
+                                        <i class="fas fa-trademark"></i>
+                                        <span>Choose brand logo</span>
+                                    </div>
+                                    <img id="brandLogoPreview" style="display: none; width: 100%; height: 120px; object-fit: contain; background: #f3f4f6; border-radius: 8px; padding: 0.5rem; margin-top: 0.75rem;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Social Media Handle</label>
+                            <input type="text" id="profileHandle" name="profile_handle" class="form-control" placeholder="@yourhandle" style="width: 100%; padding: 0.75rem; border: 1px solid var(--light-gray); border-radius: 8px; font-family: 'Inter', sans-serif;">
+                        </div>
+                    </div>
+                    
+                    <hr style="border: none; border-top: 1px solid var(--light-gray); margin: 1.5rem 0;">
+                    
+                        <label class="form-label">Your Content</label>
+                        <textarea 
+                            id="topic" 
+                            name="topic" 
+                            class="form-textarea" 
+                            placeholder="Paste your blog post, article, tips, or any content here... Example: 'Top 5 productivity tips for remote workers: 1. Create a dedicated workspace...'"
+                            required
+                        ></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Platform</label>
+                            <select id="platform" name="platform" class="form-select" required>
+                                <option value="instagram">Instagram</option>
+                                <option value="linkedin">LinkedIn</option>
+                                <option value="twitter">Twitter</option>
+                                <option value="presentation">Presentation</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Design Style</label>
+                            <select id="style" name="style" class="form-select" required>
+                                <option value="modern">Modern</option>
+                                <option value="professional">Professional</option>
+                                <option value="creative">Creative</option>
+                                <option value="vibrant">Vibrant</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Number of Slides</label>
+                        <input type="number" id="slide_count" name="slide_count" min="1" value="5" class="form-select" style="padding: 0.75rem; font-size: 0.95rem;">
+                        <div style="font-size: 0.85rem; color: #9ca3af; margin-top: 0.35rem;">Enter any number (1-20 recommended)</div>
+                    </div>
+                    
+                    <button type="submit" id="generateBtn" class="btn-generate">
+                        <i class="fas fa-wand-magic-sparkles"></i> Generate AI Carousel
+                    </button>
+                </form>
+                
+                <div class="features-list">
+                    <h4>✨ Professional Features:</h4>
+                    <ul>
+                        <li>AI-powered content generation</li>
+                        <li>Beautiful Canva-style backgrounds</li>
+                        <li>Platform-optimized designs</li>
+                        <li>Ready-to-post images</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Loading overlay -->
+<div id="loading" class="loading-overlay" style="display: none;">
+    <div class="loading-card">
+        <div class="loading-spinner"></div>
+        <h3>Generating Your Carousel</h3>
+        <p>Creating amazing content for you...</p>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Sidebar navigation
+        $('.nav-item').click(function(e) {
+            e.preventDefault();
+            $('.nav-item').removeClass('active');
+            $(this).addClass('active');
+        });
+        
+        // File upload handlers
+        $('#profileImage').change(function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#profileImagePreview').attr('src', e.target.result).show();
+                    $(this).siblings('.file-upload-display').hide();
+                }.bind(this);
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        $('#brandLogo').change(function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#brandLogoPreview').attr('src', e.target.result).show();
+                    $(this).siblings('.file-upload-display').hide();
+                }.bind(this);
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Click on image preview to upload again
+        $(document).on('click', '#profileImagePreview, #brandLogoPreview', function() {
+            const inputId = $(this).attr('id') === 'profileImagePreview' ? '#profileImage' : '#brandLogo';
+            $(inputId).click();
+        });
+        
+        // Form submission
+        $('#carouselForm').submit(function(e) {
+            e.preventDefault();
+            
+            const topic = $('#topic').val();
+            if (!topic.trim()) {
+                toastr.error('Please enter your content');
+                return;
+            }
+            
+            // Collect base64 images if uploaded
+            const profileImageBase64 = $('#profileImagePreview')[0]?.src;
+            const brandLogoBase64 = $('#brandLogoPreview')[0]?.src;
+            
+            const formData = {
+                topic: topic,
+                platform: $('#platform').val(),
+                style: $('#style').val(),
+                slide_count: parseInt($('#slide_count').val()) || 5,
+                profile_image: profileImageBase64 || null,
+                brand_logo: brandLogoBase64 || null,
+                profile_handle: $('#profileHandle').val() || ''
+            };
+            
+            // Show loading
+            $('#loading').fadeIn();
+            
+            // Generate carousel
+            $.ajax({
+                url: '/api/generate-carousel/',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                headers: {
+                    'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Redirect to editor
+                        window.location.href = `/editor/${response.project_id}/`;
+                    } else {
+                        toastr.error(response.error || 'Generation failed');
+                        $('#loading').fadeOut();
+                    }
+                },
+                error: function(xhr) {
+                    try {
+                        const error = JSON.parse(xhr.responseText);
+                        toastr.error(error.error || 'An error occurred');
+                    } catch {
+                        toastr.error('Network error. Please try again.');
+                    }
+                    $('#loading').fadeOut();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
